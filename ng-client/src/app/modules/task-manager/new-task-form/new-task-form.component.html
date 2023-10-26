@@ -1,0 +1,32 @@
+<form [formGroup]="newTaskForm" (ngSubmit)="onSubmit" class="new-task-form">
+    <div class="form-group">
+        <label for="assignee">assignee</label>
+        <input type="text" formControlName="assignee" id="assignee">
+    </div>
+    
+    <div class="form-group">
+        <label for="priority">priority</label>
+        <select id="priority" formControlName="priority">
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+            <option value="critical">critical</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="is-complete">is complete</label>
+        <input type="checkbox" id="is-complete" formControlName="isComplete">
+    </div>
+
+    <div class="form-group">
+        <label for="status">status</label>
+        <select id="status" formControlName="status">
+            <option value="todo">todo</option>
+            <option value="in progress">in progress</option>
+            <option value="completed">completed</option>
+        </select>
+    </div>
+
+    <button type="submit">submit</button>
+</form>
