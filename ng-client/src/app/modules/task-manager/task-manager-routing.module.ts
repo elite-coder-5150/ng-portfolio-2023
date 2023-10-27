@@ -1,7 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-const routes: Routes = [];
+import { NewTaskFormComponent } from './new-task-form/new-task-form.component'
+const routes: Routes = [
+  {
+    path: 'new-task',
+    component: NewTaskFormComponent
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
