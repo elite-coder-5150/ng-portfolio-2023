@@ -1,7 +1,10 @@
 # Component Manager Documentation
-Function name: __createComponent__
 
+## Simple Route Handlers
+
+#### Function name: __createComponent
 #### Description
+
 
 The first thing that this function starts by extracting data from the HTTP request body, which includes the component's name, author, version, type, and description amongst other fields.
 
