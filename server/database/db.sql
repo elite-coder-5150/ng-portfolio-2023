@@ -6,10 +6,10 @@ use `portfolio_2023`;
 drop table follow_system;
 /* 2023-10-31 07:52:29 [30 ms] */ 
 create table follow_system (
-    follow_id int(11) AUTO_INCREMENT primary key,
-    followee varchar(255),
-    follower varchar(255),
-    follow_date datetime default CURRENT_TIMESTAMP
+    `follow_id` int(11) AUTO_INCREMENT primary key,
+    `followee` varchar(255),
+    `follower` varchar(255),
+    `follow_date` datetime default CURRENT_TIMESTAMP
 );
 /* 2023-10-31 08:02:05 [1 ms] */ 
 use component_manager;
@@ -59,3 +59,6 @@ alter table online_users
 alter table online_users
     add column last_active TIMESTAMP;
 
+alter table `components`
+    add column `description` TEXT after `version`;/* 2023-11-01 09:01:21 [227 ms] */ 
+    
