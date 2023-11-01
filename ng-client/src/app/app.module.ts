@@ -7,18 +7,21 @@ import { SocialModule } from './modules/social/social.module';
 import { TaskManagerModule } from './modules/task-manager/task-manager.module';
 import { ContactFormComponent } from './contact-form/contact-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
+
+import { NewTaskFormComponent } from './modules/task-manager/new-task-form/new-task-form.component';
 @NgModule({
   declarations: [
     AppComponent,
     ContactFormComponent,
-
+    NewTaskFormComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     SocialModule,
+    ReactiveFormsModule,
     TaskManagerModule,
-    ReactiveFormsModule, 
+  
   ],
   providers: [],
   bootstrap: [AppComponent]
