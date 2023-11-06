@@ -2,12 +2,11 @@ import { db } from '../server';
 import { validationResult } from 'express-validator';
 
 export const request = async (req, res) => {
-    
     try {
         req.checkBody('sender', 'Sender must be a valid user id').isInt();
         req.checkBody('receiver', 'Receiver must be a valid userid').isInt();
 
-        const errors = req.validationErrors();
+        const errors = req.validationResult();
 
         if (errors) {
             return res.status(400).json({ error: errors});
@@ -16,7 +15,7 @@ export const request = async (req, res) => {
 
         const pending = await isPending();
         if (pending) {
-            res.status(400).json({error: 'request is pending'});
+            res.status(400).json({error: err, message: 'request is pending'});
         } else {
             const sql = /* sql */ `
                 INSERT INTO relation (from, to, status) 
@@ -84,7 +83,7 @@ export const alreadyFriends = async (req, res) => {
     }
 }
 
-//* check to see if the request is pending
+//? check to see if the request is pending
 export const isPending = async (req, res) => {
     try {
         req.checkBody('sender', 'Sender must be a valid user id').isInt();
@@ -167,6 +166,8 @@ export const accept = async (req, res) => {
     }
 };
 
+//? cancel the request.
+//? the function is not finished.
 export const cancel = async (req, res) => {
     try {
         req.checkBody('sender', 'Sender must be a valid user id').isInt();
@@ -178,30 +179,32 @@ export const cancel = async (req, res) => {
             return res.status(400).json({ error: errors});
         }
 
-        const { sender, receiver } = req.body;
-
-        const sql = /* sql */ `
-            DELETE FROM relation 
-            WHERE status='p' AND from=? and to=?
-        `;
+        //? not sure if i need this 
+        // const { sender, receiver } = req.body;
 
         try {
             const results = await new Promise((resolve, reject) => {
                  // remove the request from the database.
                 const sql = /* sql */ `
                     DELETE FROM relation where status='p'
-                    AND from=? AND to=?
+                    AND sender=? AND receiver=?
                 `;
-                db.query(sql, [from, to], (err, results) => {
+                db.query(sql, [sender, receiver], (err, results) => {
                     if (err) {
                         reject(err);
                     } else {
                         resolve(results);
                     }
                 });
-            })
+            });
+
+            if (results.affectedRows == 1) {
+                res.status(200).send({error: false, message: 'successfully cancelled the request'});
+            } else {
+                res.status(404).send({error: true, message: 'request not found'});
+            }
         } catch (err) {
-            
+            res.status(500).send({error: err.error, message: 'internal server error'});
         }
     } catch (err) {
         console.error(err);
