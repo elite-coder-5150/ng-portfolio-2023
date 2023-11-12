@@ -47,7 +47,7 @@ export const alreadyFriends = async (req, res) => {
         req.checkBody('sender', 'Sender must be a valid user id').isInt();
         req.checkBody('receiver', 'Receiver must be a valid userid').isInt();
 
-        const errors = req.validationErrors();
+        const errors = req.validationResult();
 
         if (errors) {
             return res.status(400).json({ error: errors});
@@ -58,7 +58,7 @@ export const alreadyFriends = async (req, res) => {
         const sql = /* sql */` 
                 SELECT * 
                 FROM relation 
-                WHERE receiver=? AND sender=? AND status='f'
+                WHERE sender=? AND receiver=? AND status='f'
             `;
 
         try {
