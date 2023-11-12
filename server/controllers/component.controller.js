@@ -1,6 +1,13 @@
 import { db } from '../server';
 import { validationResult } from 'express-validator';
 
+/**
+ * 
+ * @param {*} req - the request object
+ * @param {*} res - the response object
+ * @returns {Promise} 
+ */
+// FIXME: this function is not retturning all that i need to do here...
 export const createComponent = async (req, res) => {
     try {
         const { component_name, author, version, type, description } = req.body;
@@ -17,7 +24,7 @@ export const createComponent = async (req, res) => {
         req.checkBody('type', 'Component type must be a valid type').isEnum();
         req.checkBody('description', 'Version must be a valid string').isString();
 
-        const errors = req.validationErrors();
+        const errors = req.validationResult();
 
         if (errors) {
             return res.status(400).json({ error: errors });
@@ -53,3 +60,28 @@ export const createComponent = async (req, res) => {
         console.error(error);
     }
 };
+
+export const getAllComponents = async (req, res) => {
+
+    const {c_id, c_name} = req.body;
+    try {
+        const sql = /* sql */ `select * from components as c`;
+
+        const results = await new Promise((resolve, reject) => {
+            db.query(sql, (err, results) => {
+                if (err) { 
+                    return reject(err);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+
+        if (results.length > 0) {
+            res.status(200).send(results);
+        } else {
+            res.status(500).send({ success: false, err: err.message });
+        }
+    } catch (error) {
+    }
+}
