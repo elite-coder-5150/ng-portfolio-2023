@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NgRtChatComponent } from './ng-rt-chat.component';
+import { VideoPostComponent } from './video-post.component';
 
-describe('NgRtChatComponent', () => {
-  let component: NgRtChatComponent;
-  let fixture: ComponentFixture<NgRtChatComponent>;
+describe('VideoPostComponent', () => {
+  let component: VideoPostComponent;
+  let fixture: ComponentFixture<VideoPostComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [NgRtChatComponent]
+      declarations: [VideoPostComponent]
     });
-    fixture = TestBed.createComponent(NgRtChatComponent);
+    fixture = TestBed.createComponent(VideoPostComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
