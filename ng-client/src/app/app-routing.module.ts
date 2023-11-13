@@ -19,7 +19,7 @@ const routes: Routes = [
   {
     path: 'ecommerce',
     loadChildren: () => import('./modules/ecommerce/ecommerce.module').then(m => m.EcommerceModule)
-  }
+  },
 ];
 
 @NgModule({
