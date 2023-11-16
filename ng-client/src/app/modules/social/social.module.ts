@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SocialRoutingModule } from './social-routing.module';
 
+import { SocialRoutingModule } from './social-routing.module';
+import { FormsModule } from '@angular/forms';
 import { NgChatComponent } from './ng-chat/ng-chat.component';
 import { HomeComponent } from './home/home.component';
 import { FriendsListComponent } from './friends-list/friends-list.component';
@@ -32,7 +33,7 @@ import { RelationshipComponent } from './relationship/relationship.component';
     CommonModule,
     SocialRoutingModule,
     ReactiveFormsModule,
-
+    FormsModule
   ]
 })
 export class SocialModule { }
