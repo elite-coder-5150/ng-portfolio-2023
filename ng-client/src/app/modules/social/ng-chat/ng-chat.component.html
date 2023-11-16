@@ -1,1 +1,15 @@
-<p>ng-chat works!</p>
+<div class="chat-container">
+    <div class="msg-container">
+        <div *ngFor="let message of messages">{{ message }}</div>
+    </div>
+
+    <div class="input-container">
+        <input [(ngModel)]="newMsg" placeholder="What's on your mind" />
+        <button (click)="sendMsg()" class="btn btn-primary rounded">
+            <div class="icon">
+                <div class="plane-icon"></div>
+            </div>
+            Semd Message
+        </button>
+    </div>
+</div>
