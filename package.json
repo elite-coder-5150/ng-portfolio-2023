@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "jasmine-marbles": "^0.9.2"
+  }
+}
