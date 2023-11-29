@@ -28,7 +28,7 @@ export const searchUsers = async (req, res) => {
     }
 }
 
-export const searchComponent = async (req, res) => {
+export const searchComponentByCategory = async (req, res) => {
     const { category } = req.params;
 
     try {
