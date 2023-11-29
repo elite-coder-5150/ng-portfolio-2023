@@ -9,3 +9,4 @@ export interface Newsletter {
     status: Status;
     created_at: Date
 }
+
