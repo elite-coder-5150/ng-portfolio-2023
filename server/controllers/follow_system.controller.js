@@ -1,5 +1,5 @@
 const db = require('../server');
-const { query_db } = require('../utility/query_db');
+const { getResults } = require('../utility/getResults');
 
 export const follow = async (req, res) => {
     try {
@@ -17,7 +17,7 @@ export const follow = async (req, res) => {
             values (?, ?, ?, now())
         `;
 
-        const results = await query_db(sql, [id]);
+        const results = await getResults(sql, [id]);
 
         if (results.affectedRows === 0) {
             return res.status(404).send({
@@ -53,7 +53,7 @@ export const unfollow = async (req, res) => {
             where sender_id = ? and receiver_id = ?
         `;
 
-        const results = await query_db(sql, [sender, receiver]);
+        const results = await getResults(sql, [sender, receiver]);
 
         if (results.affectedRows === 0) {
             return res.status(404).send({
@@ -87,7 +87,7 @@ export const getFollowers = async (req, res) => {
             where receiver_id = ?
         `;
 
-        const results = await query_db(sql, [userId]);
+        const results = await getResults(sql, [userId]);
 
         return res.status(200).send({
             success: true,
@@ -107,13 +107,27 @@ export const getFollowing = async (req, res) => {
     try {
         const { userId } = req.params;
 
+        if (!userId) {
+            return res.status(404).send({
+                success: false,
+                message: 'userId is required'
+            });
+        }
+
         const sql = /* sql */`
             select fs.sender_id 
             from follow_system fs
             where fs.sender_id = ?
         `;
 
-        const results = await query_db(sql, [userId]);
+        const results = await getResults(sql, [userId]);
+
+        if (results.affectedRows === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'error retrieving the people you are following'
+            })
+        }
 
         return res.status(200).send({
             success: true,
@@ -137,8 +151,8 @@ export const updateFollowStatus = async (req, res) => {
             set status = ?
             where sender_id = ? and receiver_id = ?
         `;
-ß
-        const results = await query_db(sql, [status, sender, receiver]);
+
+        const results = await getResults(sql, [status, sender, receiver]);
 
         return res.status(200).send({
             success: true,
