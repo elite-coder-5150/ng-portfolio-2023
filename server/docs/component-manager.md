@@ -2,7 +2,7 @@
 
 ## Simple Route Handlers
 
-#### Function name: __createComponent
+#### Function name: **createComponent**
 #### Description
 
 
