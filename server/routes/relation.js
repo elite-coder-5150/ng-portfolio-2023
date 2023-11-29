@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validateRelation } = require('../middleware/validate');
 
 import {
     request,
@@ -9,7 +10,7 @@ import {
     cancel
 } from '../controllers/relation.controller';
 
-router.post('/request', request);
+router.post('/request', validateRelation, request);
 router.post('/already-friends', alreadyFriends);
 router.post('/is-pending', isPending);
 router.post('/cancel', cancel);
