@@ -49,3 +49,33 @@ export const searchComponentByCategory = async (req, res) => {
         console.error(err);
     }
 };
+
+//? ---------------------------------------------------------------------------
+const express = require('express');
+const router = express.Router();
+
+const { queryDb } = require('../database'); // Import your database query function
+
+router.get('/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q) {
+      return res.status(400).json({ success: false, message: 'Search query parameter "q" is required.' });
+    }
+
+    const sql = /* sql */`
+      SELECT * FROM articles
+      WHERE MATCH(title, content) AGAINST(? IN BOOLEAN MODE)
+    `;
+
+    const results = await queryDb(sql, [q]);
+
+    return res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+module.exports = router;
