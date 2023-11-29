@@ -1,213 +1,245 @@
-import { db } from '../server';
-import { validationResult } from 'express-validator';
-
-export const request = async (req, res) => {
+const getResults = require('../utility/getResults');
+//? send a request to another user.
+export const sendRequest = async (req, res) => {
     try {
-        req.checkBody('sender', 'Sender must be a valid user id').isInt();
-        req.checkBody('receiver', 'Receiver must be a valid userid').isInt();
-
-        const errors = req.validationResult();
-
-        if (errors) {
-            return res.status(400).json({ error: errors});
-        }
-        const { sender, receiver} = req.body;
-
         const pending = await isPending();
+        const alreadyFriends = await alreadyFriends();
+
         if (pending) {
-            res.status(400).json({error: err, message: 'request is pending'});
-        } else {
-            const sql = /* sql */ `
-                INSERT INTO relation (from, to, status) 
-                VALUES (:from, :to, :status)`;
-
-            const results = await new Promise((resolve, reject) => {
-                db.query(sql, [from, to, status], (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(results);
-                    }
-
-                    const friends = results.legnth > 0;
-                    res.json({Friends: friends}); 
-                });
+            res.status(400).send({
+                success: false,
+                message: 'The request is pending.'
             });
-        }
-    } catch (err) {
-        console.error(err)
-    }
-}
+        } else if (alreadyFriends) {
+            res.status(400).send({
+                success: false,
+                message: 'You are already friends with this person.'
+            });
+        } else {
+            const { sender, receiver } = req.body;
 
+            if (!sender || !receiver) {
+                return res.status(400).send({
+                    success: false,
+                    message: 'sender and receiver are required'
+                });
+            }
 
-
-//? check if the users are already fiends.
-export const alreadyFriends = async (req, res) => {
-    try {
-        req.checkBody('sender', 'Sender must be a valid user id').isInt();
-        req.checkBody('receiver', 'Receiver must be a valid userid').isInt();
-
-        const errors = req.validationResult();
-
-        if (errors) {
-            return res.status(400).json({ error: errors});
-        }
-
-        const { sender, receiver } = req.body;
-
-        const sql = /* sql */` 
-                SELECT * 
-                FROM relation 
-                WHERE sender=? AND receiver=? AND status='f'
+            const sql = /* sql */`
+                insert into relation (sender, receiver, status)
+                values (?, ?, 'p');
             `;
 
-        try {
-            const results = await new Promise((resolve, reject) => {
-                db.query(sql, [receiver, sender], (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(results);
-                    }
-                })
-            });
+            const results = await getResults(sql, [sender, receiver]);
 
-            const friends = results.length > 0;
-            res.json({ alreadyFriends: friends });
-        } catch (err) {
-            console.error(err);
-            res.status(500).json({error: err});
+            if (results.length === 0) {
+                return res.status(404).send({
+                    success: false,
+                    message: 'request not found'
+                });
+            }
+
+            return res.status(200).send({
+                success: true,
+                message: 'successfuly canceled request',
+                data: results
+            })
         }
-    } catch (err) {
-        console.error(err);
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            success: false,
+            message: 'internal server error'
+        });
     }
-}
-
+};
 //? check to see if the request is pending
 export const isPending = async (req, res) => {
     try {
-        req.checkBody('sender', 'Sender must be a valid user id').isInt();
-        req.checkBody('receiver', 'Receiver must be a valid userid').isInt();
-
-        const errors = req.validationErrors();
-
-        if (errors) {
-            return res.status(400).json({ error: errors});
-        }
-
         const { sender, receiver } = req.body;
+        
+        if (!sender || !receiver) {
+            return res.status(400).send({
+                success: false,
+                message: 'sender and receiver are required'
+            })
+        }
         const sql = /* sql */`
-            SELECT * FROM relation 
+            SELECT * FROM relation
             WHERE (
                 status = 'p' AND sender=? AND receiver=?
             ) OR (
                 status = 'p' AND receiver=? AND sender=?
-            )`;
+            )
+        `;
 
-        db.query(sql, [sender, receiver, receiver, sender], (err, results) => {
-            if (err) {
-                console.error(err);
-                res.status(500).json({ error: "Server error" });
-            } else {
-                if (results.length > 0) {
-                    res.json(results[0]);
-                } else {
-                    res.status(404).send({ success: false, error: 'No pending requests' });
-                }
-            }
-        });
+        const results = await getResults(sql, [sender, receiver, receiver, sender]);
+
+        if (results.affectedRows === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'no pending requests were found'
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            data: results
+        })
     } catch (err) {
         console.error(err);
         res.status(500).send({ error: "Server error" });
-    
-    }
-}
-
-//? TODO: I need to add the recipocal relationship for the other user.
-export const accept = async (req, res) => {
-    try {
-        req.checkBody('sender', 'Sender must be a valid user id').isInt();
-        req.checkBody('receiver', 'Receiver must be a valid userid').isInt();
-
-        const errors = req.validationErrors();
-
-        if (errors) {
-            return res.status(400).json({ error: errors});
-        }
-
-        const { sender, receiver } = req.body;
-
-        const sql = /* sql */ `
-            UPDATE relation SET status='f' WHERE status='p'
-            AND from='?' AND  to='?'
-        `;
-
-        try {
-            const results = await new Promise((resolve, reject) => {
-                db.query(sql, [from, to], (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(results);
-                    }
-                });
-            });
-
-            if (results.affectedRows == 0) {
-                res.status(500).send({ success: false, err: err.message});
-            } else {
-                res.status(200).send({ success: true, message: 'successfully added a new friend' });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    } catch (err) {
-        console.error(err);
     }
 };
 
-//? cancel the request.
-//? the function is not finished.
-export const cancel = async (req, res) => {
+//? get all of teh request from the database
+export const getAllRequests = async (req, res) => {
     try {
-        req.checkBody('sender', 'Sender must be a valid user id').isInt();
-        req.checkBody('receiver', 'Receiver must be a valid userid').isInt();
+        const { sender, receiver } = req.body;
 
-        const errors = req.validationErrors();
-
-        if (errors) {
-            return res.status(400).json({ error: errors});
+        if (!sender || !receiver) {
+            return res.status(404).send({
+                success: false,
+                message: 'sender and receiver are required'
+            })
         }
+        const sql = /*sql*/ `
+            SELECT * 
+            FROM requests 
+            WHERE sender=? AND receiver=?
+        `;
 
-        //? not sure if i need this 
-        // const { sender, receiver } = req.body;
+        const results = await getResults(sql, [sender, receiver]);
 
-        try {
-            const results = await new Promise((resolve, reject) => {
-                 // remove the request from the database.
-                const sql = /* sql */ `
-                    DELETE FROM relation where status='p'
-                    AND sender=? AND receiver=?
-                `;
-                db.query(sql, [sender, receiver], (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(results);
-                    }
-                });
+        if (results.affectedRows === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'error getting requests'
             });
-
-            if (results.affectedRows == 1) {
-                res.status(200).send({error: false, message: 'successfully cancelled the request'});
-            } else {
-                res.status(404).send({error: true, message: 'request not found'});
-            }
-        } catch (err) {
-            res.status(500).send({error: err.error, message: 'internal server error'});
         }
+
+        return res.status(200).send({
+            success: true,
+            message: 'requests received successfully',
+            data: results
+        })
     } catch (err) {
         console.error(err);
-        
+    }
+}
+
+//? check if the users are already fiends.
+export const alreadyFriends = async (req, res) => {
+    try {
+        const { sender, receiver } = req.body;
+
+        if (!sender || !receiver) {
+            return res.status(400).send({
+                success: false,
+                message: 'sender and receiver are required'
+            });
+        }
+        const sql = /* sql */` 
+            SELECT * 
+            FROM relation 
+            WHERE sender=? AND receiver=? AND status='f'
+        `;
+
+        const results = await getResults(sql, [sender, receiver]);
+
+        if (results.affectedRows === 0) {
+            return res.status(400).send({
+                success: false,
+                message: 'the users are not found'
+            })
+        }
+        return res.status(200).send({
+            success: true,
+            message: 'you are already friends with this person',
+            data: results
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+//? accept the request
+export const accept = async (req, res) => {
+    try {
+        const { sender, receiver } = req.body;
+
+        if (!sender || !receiver) {
+            return res.status(400).send({
+                success: false,
+                message: 'sender and receiver are required'
+            });
+        }
+
+        const sql = /* sql */`
+            update relation
+            set status = 'f'
+            where sender=? and receiver=? and status='p'
+        `;
+
+        const results = await getResults(sql, [requestId]);
+
+        if (results.length === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'request not found'
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            message: 'successfuly canceled request',
+            data: results
+        })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            success: false,
+            message: 'internal server error'
+        });
+    }
+};
+
+//? cancene the request
+export const cancel = async (req, res) => {
+    try {
+        const { requestId } = req.params;
+
+        if (!requestId) {
+            return res.status(400).send({
+                success: false,
+                message: 'requestId is required'
+            });
+        }
+
+        const sql = /* sql */`
+            delete from relations where requestid = ?
+        `;
+
+        const results = await getResults(sql, [requestId]);
+
+        if (results.length === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'request not found'
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            message: 'successfuly canceled request',
+            data: results
+        })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            success: false,
+            message: 'internal server error'
+        });
     }
 }
