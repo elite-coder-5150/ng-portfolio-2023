@@ -11,6 +11,16 @@ create table follow_system (
     `follower` varchar(255),
     `follow_date` datetime default CURRENT_TIMESTAMP
 );
+
+create table `follow_system` (
+    `follow_id` int(11) AUTO_INCREMENT primary key,
+    `sender_id` int(11) not null,
+    `receiver_id` int(11) NOT NULL,
+    `since` datetime default CURRENT_TIMESTAMP
+);
+
+use `portfolio_2023`;
+
 /* 2023-10-31 08:02:05 [1 ms] */ 
 use component_manager;
 /* 2023-10-31 08:03:51 [2 ms] */ 
@@ -49,7 +59,7 @@ CREATE TABLE components (
   created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
+use portfolio_2023;
 
 alter table online_users
     add column ststus enum('online', 'offline') NOT NULL;
@@ -271,3 +281,19 @@ create index `idx_user_post_id` on users (`u_id`);
 create index `idx_notify_to` on users(`u_id`);
 
 select count(*) as comment_count from comments;
+
+select * from users;
+
+use `portfolio_2023`
+
+alter table `components`
+    drop column `category`;
+
+drop database component_manager;
+drop database if exists `portfolio`;
+
+drop database `code_base`;
+drop database `codehub`;
+drop database `dive_sea`;
+drop database `phoenix_cds`;
+
