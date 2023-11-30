@@ -1,87 +1,21 @@
-import { db } from '../server';
-import { validationResult } from 'express-validator';
+import { getResults } from "../utility/getResults";
 
-/**
- * 
- * @param {*} req - the request object
- * @param {*} res - the response object
- * @returns {Promise} 
- */
-// FIXME: this function is not retturning all that i need to do here...
-export const createComponent = async (req, res) => {
+
+
+
+export const getAllComponentsFromUser = async (req, res) => {
     try {
-        const { component_name, author, version, type, description } = req.body;
-        const created_date = new Date()
-                                    .toISOString()
-                                    .slice(0, 19)
-                                    .replace('T', ' ');
+        const { userId } = req.params;
 
-        req.checkBody('created_date', 'Created date must be a valid Date').isDate();
-        req.checkBody('component_name', 'Component name must be a valid string').isString();
-        req.checkBody('component_id', 'Component id must be a valid string').isString();
-        req.checkBody('component_type', 'Component type must be a valid component type').isEnum();
-        req.checkBody('version', 'Version must be a valid string').isString();
-        req.checkBody('type', 'Component type must be a valid type').isEnum();
-        req.checkBody('description', 'Version must be a valid string').isString();
-
-        const errors = req.validationResult();
-
-        if (errors) {
-            return res.status(400).json({ error: errors });
-        }   
-
-        const sql = /* sql */ `
-            INSERT INTO components
-            (component_id, author, version, description, type, updated_date, created_date) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `;
-
-        try {
-            const results = await new Promise((resolve, reject) => {
-                db.query(sql, [component_id, author, version, description, type, updated_date, created_date], (err, results) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(results);
-                    }
-                });
+        if (!userId) {
+            return res.status(400).send({
+                success: false,
+                message: 'user id is requried'
             });
-
-            if (results.affectedRows == 0) {
-                res.status(500).send({ success: false, err: err.message })
-            } else {
-                res.status(200).send({ success: true, message: 'successfully create a new component'})
-            }
-        } catch (error) {
-            console.log(error);
         }
 
+        
     } catch (error) {
         console.error(error);
-    }
-};
-
-export const getAllComponents = async (req, res) => {
-
-    const {c_id, c_name} = req.body;
-    try {
-        const sql = /* sql */ `select * from components as c`;
-
-        const results = await new Promise((resolve, reject) => {
-            db.query(sql, (err, results) => {
-                if (err) { 
-                    return reject(err);
-                } else {
-                    resolve(results);
-                }
-            });
-        });
-
-        if (results.length > 0) {
-            res.status(200).send(results);
-        } else {
-            res.status(500).send({ success: false, err: err.message });
-        }
-    } catch (error) {
     }
 }
