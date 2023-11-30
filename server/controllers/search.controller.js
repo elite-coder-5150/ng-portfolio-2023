@@ -1,5 +1,6 @@
 import { db } from '../server.js'
 
+// TODO : refactor this crap! 
 /**
  * 
  * 
