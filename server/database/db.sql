@@ -297,3 +297,7 @@ drop database `codehub`;
 drop database `dive_sea`;
 drop database `phoenix_cds`;
 
+alter table `tasks`
+    drop column `assignee_id`;
+
+select t.assignee from tasks t
