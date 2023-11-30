@@ -116,50 +116,67 @@ export const updateUser = async (req, res) => {
             where u_id=?
         `
 
-        const results = await getResults(sql, [username, email, password])
+        const results = await getResults(sql, [username, email, password]);
+
+        if (results.affectedRows === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'user not found'
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            message: 'user successfully updated',
+            data: results
+        });
     } catch (error) {
         console.error(error);
-    }
-};
 
-export const deleteUser = (req, res) => {
-    const userId = req.params.id;
-
-    try { 
-        const sql = `DELETE FROM users WHERE id=?`;
-
-        db.query(sql, [userId], (err, result) => {
-            if (err) {
-                res.status(400).send('error deleting user');
-            } else if (result.affectedRows > 0) {
-                res.send('user deleted successfully');
-            } else {
-                res.status(404).send('user not found');
-            }
-        })
-    } catch (err) {
-        console.error(err);
-        res.status (500).send('internal server error');
-    }
-};
-
-export const getAllComponentsFromUser = (req, res) => {
-    const { c_id, c_author } = req.body;
-
-    try {
-        const sql = /* sql */ `
-            select c_id, c_author from components where c_id=? and c_author=?
-        `;
-        db.query(sql, [c_id, c_author], (err, results) => {
-            if (err) {
-                console.error(err);
-            } else if (results.length > 0) {
-                res.status(200).send(results);
-            } else {
-                res.status(404).send({error: true, message: 'no component found'});
-            }
+        return res.status(500).send({
+            success: false, 
+            message: 'Internal Server Error'
         });
-    } catch (err) {
-        console.error(err);
     }
-}
+};
+
+export const deleteUser = async(req, res) => {
+    try {
+        const { userId } = req.params;
+
+        if (!userId) {
+            return res.status(400).send({
+                success: false,
+                message: 'User id, is required'
+            })
+        }
+
+        const sql = /* sql */`
+            delete from users
+            where user_id = ?
+        `
+
+        const results = await getResults(sql, [username, email, password]);
+
+        if (results.affectedRows === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'user not found'
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            message: 'user successfully deleted',
+            data: results
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).send({
+            success: false, 
+            message: 'Internal Server Error'
+        });
+    }
+};
+
