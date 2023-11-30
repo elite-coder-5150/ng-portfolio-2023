@@ -1,18 +1,21 @@
-import { db } from '../server';
+import {getResults} from "../utility/getResults";
+
 export const getAllTasks = async (req, res) => {
     try {
-        db.query("SELECT * FROM tasks", (err, results) => {
-            if (err) {
-                console.error('error executing the query: ' + err);
-                return res.status(500).json({error: 'query execution error'});
-            }
+        const sql = /* sql */`
+            select * from tasks 
+        `;
 
-            db.close();
+        const results = await getResults(sql);
 
-            res.status(200).json({tasks: results });
-        })
-    } catch (e) {
-        console.error('error executing the query: ' + e);
+        return res.status(200).send({
+            message: 'retrieved all the tasks successfully',
+            rows: results
+
+        });
+
+    } catch (error) {
+        console.error(error);
         res.status(500).json({error: 'query execution error'});
     }
 }
