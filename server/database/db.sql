@@ -300,4 +300,209 @@ drop database `phoenix_cds`;
 alter table `tasks`
     drop column `assignee_id`;
 
-select t.assignee from tasks t
+select t.assignee from tasks t;
+
+
+----------------------------------------------------------------
+
+-- Active: 1683683697292@@127.0.0.1@8889@portfolio_2023
+use `portfolio_2023`;
+
+SELECT * FROM chat;
+
+create table conversation (
+    convo_id int(11) int AUTO_INCREMENT primary key,
+    subject varchar(255),
+    date_created datetime default CURRENT_TIMESTAMP
+);
+
+
+
+select * from follow_system;
+SELECT * FROM blocked_users;
+SELECT * FROM message;
+
+create table if not exists `priv_msg` (
+    `p_msg_id` INT PRIMARY KEY AUTO_INCREMENT,
+    `pm_sender_id` INT NOT NULL,
+    `pm_receiver_id` INT NOT NULL,
+    `msg_content` TEXT NOT NULL,
+    `msg_date` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `last_seen_date` DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+create index `idx_sender_id` on `users` (`u_id`);
+
+create index `idx_receiver_id` on `users` (`u_id`);
+
+use component_manager;
+use portfolio_2023;
+
+ create table `notifications` (
+    `notification_id` int(11) not null,
+    `notified_by` int(11) not null,
+    `type` varchar(255) not null,
+    `notify_to` int(11) not null,
+    `notify_of` int(11) not null,
+    `post_id` int(11) not null,
+    `time` datetime not null,
+    `status` enum('read', 'unread') default 'unread'
+ );
+ alter table `notifications`
+    add column `message` varchar(255);
+
+ SELECT * FROM notifications;
+
+ create table `newsletter` (
+    `newsletter_id` int(11) not null,
+    `f_name` varchar(255) not null,
+    `email` varchar(255) not null,
+    `status` enum ('active', 'inactive') not null,
+    `created_at` timestamp not null default CURRENT_TIMESTAMP
+ );
+
+ SELECT * FROM `newsletter`;
+
+--- how can i join these shemas so each user has a list of components they have created
+create table if not exists `components` (
+    `c_id` int(11) primary key not null,
+    `c_name` varchar(255) not null,
+    `c_version` int(11) not null,
+    `c_author` varchar(255) not null,
+    `c_description` varchar(255) not null,
+    `c_type` enum ('angular', 'react', 'vue', 'stand along', 'node'),
+    `c_created_at` DATETIME,
+    `c_updated_at` DATETIME
+);
+
+create table if not exists `users` (
+    `u_id` int(11) unsigned NOT NULL,
+    `u_name` varchar(255) NOT NULL,
+    `email` varchar(255) NOT NULL,
+    `password` varchar(255) NOT NULL,
+    `profile_pic` varchar(255) NOT NULL
+);
+
+select u.u_id, u.u_name 
+from users u 
+left join components c on u.u_id = c.c_author;
+
+alter table `components`
+    add column `category` VARCHAR(30) after c_description;
+
+select * from `components`;
+
+select * from `notifications`;
+
+create table `status_update` (
+    `p_id` int(11) NOT NULL auto_increment primary key,
+    `u_id` int(11) NOT NULL,
+    `content`  text not null,
+    `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `comments` (
+  `comment_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `post_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `comment_content` TEXT NOT NULL,
+  `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+alter table `comments`
+    add column `like_count` int default 0;
+
+create index idx_cmt_post_id on `posts` (`post_id`);
+create index idx_cmt_user_id on `users` (`u_id`);
+
+update the comments by one.
+update `comments`
+set like_count = like_count + 1;
+
+select c.comment_content, p.content 
+from comments c 
+join status_update p on c.post_id = p.p_id
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS `videos` (
+  `video_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `uploader` INT NOT NULL, -- Assuming uploader is the user_id
+  `description` TEXT,
+  `likes` INT DEFAULT 0,
+  `dislikes` INT DEFAULT 0,
+  `upload_timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--   FOREIGN KEY (`uploader`) REFERENCES `users` (`user_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `subscriptions` (
+  `subscription_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `subscriber_id` INT NOT NULL, -- User subscribing
+  `channel_id` INT NOT NULL); -- User's subscribed channel
+--   FOREIGN KEY (`subscriber_id`) REFERENCES `users` (`user_id`),
+--   FOREIGN KEY (`channel_id`) REFERENCES `users` (`user_id`)
+
+create table if not exists `video_posts`(
+    `video_post_id` int(11) NOT NULL,
+    `video_title` varchar(255) NOT NULL,
+    `uploader` int(11) NOT NULL,
+    `description` TEXT NOT NULL,
+    `likes` int(11) NOT NULL,
+    `dislikes` int(11) not null,
+    `shares` int(11) NOT NULL
+);
+
+create table `video_subscribers` (
+    `subscription_id` INT PRIMARY KEY AUTO_INCREMENT,
+    `subscriber_id` INT NOT NULL,
+    `channel_id` INT NOT NULL
+);
+
+create index idx_subscriber_id on `users` (`u_id`);
+create index idx_channel_id on `users` (`u_id`);
+
+SELECT * FROM video_posts;
+create index idx_uploader on `users` (`u_id`);
+
+select  shares from `video_posts`;
+create index user_id on `users` (`u_id`);
+create index idx_subscription_id on `subscriptions` (`subscription_id`);
+
+select * from `videos`
+
+SELECT * FROM `blocked_users`
+
+select count(*) as total_subs from subscriptions
+
+select count(*) as total from `status_update`
+
+create table `notifications` (
+    `notify_id` int(11) primary key AUTO_INCREMENT NOT NULL,
+    `notified_by` int(11) not null,
+    `type` varchar(255) not null,
+    `notify_to`int(11) not null,
+    `post_id` int(11) not null,
+    `time` timestamp not null,
+    `status` enum ('read', 'unread') default 'unread',
+    `msg` text
+);
+
+create index idx_notify_id on `users` (`u_id`);
+
+create table `posts` (
+    `post_id` int(11) primary key AUTO_INCREMENT,
+    `user_post_id` int(11) not null,
+    `likes` int(11) not null,
+    `dislikes` int(11) not null,
+    `shares` int(11) not null,
+    `content` text not null,
+    `created_at` datetime default CURRENT_TIMESTAMP
+);
+
+create index `idx_user_post_id` on users (`u_id`);
+create index `idx_notify_to` on users(`u_id`);
+
+select count(*) as comment_count from comments;
