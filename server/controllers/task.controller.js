@@ -16,70 +16,207 @@ export const getAllTasks = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({error: 'query execution error'});
+        res.status(500).send({
+            success: false,
+            message: 'internal server error'
+        })
     }
 }
 
- export const getSingleTask = (req, res) => {
-    const { id } = req.params;
+ export const getSingleTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
 
-    db.query(`SELECT * FROM tasks WHER id=?`, [id], (err, results) => {
-        if (err) {
-            throw err;
+        if (!taskId) {
+            return res.status(404).send({
+                success: false,
+                message: 'Task id is required'
+            });
         }
 
-        if (results.length > 0) {
-            res.json(results[0]);
-        } else {
-            res.status(404).send('task not found');
+        const sql = /* sql */`
+            select 
+                t.task_id, 
+                t.title, 
+                t.description, 
+                t.assignee, 
+                t.due_date,
+                t.priority,
+                t.status,
+                t.modified_date,
+                t.created_date 
+            from tasks t
+            where t.task_id = ?
+        `;
+
+        const tasks = await getResults(sql, [taskId])
+        
+        if (tasks.length === 0) {
+            return res.status(400).send({
+                success: false,
+                message: 'Task not found'
+            })
         }
-    })
+
+        return res.status(200).send({
+            tasks
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
  }
 
- export const addTask = (req, res) => {
-    const { title, description } = req.body;
-
-    const sql = `INSERT INTO tasks (title, description) VALUES(?, ?)`;
-    db.query(sql, [title, description], (err, result) => {
-        if (err) {
-            throw err;
+ export const addTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { 
+            title, description, assignee, due_date, 
+            priority, status, modified_date, created_date 
+        } = req.body;
+        
+        if (!taskId) {
+            res.status(400).send({
+                success: false,
+                message: 'Task id is required'
+            })
+        }
+        if (!title || !description || !assignee || !due_date || 
+            !priority || !status || !modified_date, !created_date) {
+            return res.status(400).send({
+                success: false,
+                message: 'all fields are required'
+            });
         }
 
-        res.status(201).send('task added successfully');
-    })
+        const sql = /* sql */`
+            insert into tasks (title, description, assignee, due_date, priority, status, modified_date, created_date)
+            values (?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        const results = await getResults(sql, [
+            title, description, assignee, due_date, 
+            priority, status, modified_date, created_date
+        ]);
+
+        if (!results.length) {
+            return res.status(400).send({
+                success: false,
+                message: 'error executing query'
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            messagege: 'task successfully inserted successfully',
+            data: results
+        });
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).send({
+            success: false,
+            message: 'internal server error'
+        });
+    }
  }
 
- export const updateTask = (req, res) => {
-    const {id, title, description} = req.body;
+ // todo: these methods need refactored.
+ export const updateTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { 
+            title, description, assignee, due_date, 
+            priority, status, modified_date, created_date 
+        } = req.body;
 
-    const sql = `UPDATE tasks SET title = ? WHERE id = ? AND description = ? WHERE id = ?`;
-
-    db.query(sql, [title, description, id], (error, results) => {
-        if (error) {
-            throw error;
+        if (!taskId) {
+            return res.status(400).send({
+                success: false,
+                message: 'task id is required'
+            });
         }
 
-        if (results.affectedRows > 0) {
-            res.send('task updated successfully');
-        } else {
-            res.status(404).send('Task not found');
+        if (!title || !description || !assignee || !due_date || 
+            !priority || !status || !modified_date, !created_date) {
+            return res.status(400).send({
+                success: false,
+                message: 'all fields are required'
+            });
         }
-    });
+
+        const sql = /* sql */`
+            update tasks
+            set title=?, description=?, assignee=?, due_date=?, priority=?, status=?, modified_date=?, created_date=?, updated_date=
+            where taskId=?
+        `;
+
+        const results = await getResults(sql, [
+            title, description, assignee, due_date, 
+            priority, status, modified_date, created_date
+        ])
+
+        if (results.affectedRows === 0) {
+            return res.status(400).send({
+                success: false,
+                message: 'error updating fields'
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            message: 'update successfully updated fields',
+            data: results
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            success: false,
+            message: 'internal server error'
+        });
+    }
  }
 
- export const deleteTask = (req, res) => {
-    const { id } = req.params;
-    const sql = `DELETE FORM tasks WHERE id = ?`;
+ export const deleteTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
 
-    db.query(sql, [id], (error, results) => {
-        if (error) {
-            throw error;
+        if (!taskId) {
+            return res.status(400).send({
+                success: false,
+                message: 'task id is required'
+            });
         }
 
-        if (results.affectedRows > 0) {
-            res.send('task deleted successfully');
-        } else {
-            res.send(404).send('Task not found');
+
+        const sql = /* sql */`
+            delete from tasks
+            where task_id = ?
+        `;
+
+        const results = await getResults(sql, [taskId]);
+
+        if (results.affectedRows === 0) {
+            return res.status(404).send({
+                success: false,
+                message: 'task not found'
+            })
         }
-    })
+
+        return res.status(200).send({
+            success: true,
+            message: 'task successfully deleted',
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).send({
+            success: false,
+            message: 'internal server error'
+        })
+    }
  }
