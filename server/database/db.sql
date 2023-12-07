@@ -624,156 +624,156 @@ alter table `users`
 add
     column `role` enum ('admin', 'moderator', 'user') not null after u_name;
 
-INSERT INTO
-    users (
-        u_id,
-        u_name,
-        role,
-        email,
-        password,
-        profile_pic_url
-    )
-VALUES (
-        1,
-        'user1',
-        'admin',
-        'user1@example.com',
-        'password1',
-        'url1'
-    ), (
-        2,
-        'user2',
-        'moderator',
-        'user2@example.com',
-        'password2',
-        'url2'
-    ), (
-        3,
-        'user3',
-        'user',
-        'user3@example.com',
-        'password3',
-        'url3'
-    ), (
-        4,
-        'user4',
-        'user',
-        'user4@example.com',
-        'password4',
-        'url4'
-    ), (
-        5,
-        'user5',
-        'user',
-        'user5@example.com',
-        'password5',
-        'url5'
-    ), (
-        6,
-        'user6',
-        'moderator',
-        'user6@example.com',
-        'password6',
-        'url6'
-    ), (
-        7,
-        'user7',
-        'admin',
-        'user7@example.com',
-        'password7',
-        'url7'
-    ), (
-        8,
-        'user8',
-        'user',
-        'user8@example.com',
-        'password8',
-        'url8'
-    ), (
-        9,
-        'user9',
-        'user',
-        'user9@example.com',
-        'password9',
-        'url9'
-    ), (
-        10,
-        'user10',
-        'admin',
-        'user10@example.com',
-        'password10',
-        'url10'
-    ), (
-        11,
-        'user11',
-        'user',
-        'user11@example.com',
-        'password11',
-        'url11'
-    ), (
-        12,
-        'user12',
-        'moderator',
-        'user12@example.com',
-        'password12',
-        'url12'
-    ), (
-        13,
-        'user13',
-        'user',
-        'user13@example.com',
-        'password13',
-        'url13'
-    ), (
-        14,
-        'user14',
-        'user',
-        'user14@example.com',
-        'password14',
-        'url14'
-    ), (
-        15,
-        'user15',
-        'admin',
-        'user15@example.com',
-        'password15',
-        'url15'
-    ), (
-        16,
-        'user16',
-        'user',
-        'user16@example.com',
-        'password16',
-        'url16'
-    ), (
-        17,
-        'user17',
-        'moderator',
-        'user17@example.com',
-        'password17',
-        'url17'
-    ), (
-        18,
-        'user18',
-        'user',
-        'user18@example.com',
-        'password18',
-        'url18'
-    ), (
-        19,
-        'user19',
-        'user',
-        'user19@example.com',
-        'password19',
-        'url19'
-    ), (
-        20,
-        'user20',
-        'admin',
-        'user20@example.com',
-        'password20',
-        'url20'
-    );
+-- INSERT INTO
+--     users (
+--         u_id,
+--         u_name,
+--         role,
+--         email,
+--         password,
+--         profile_pic_url
+--     )
+-- VALUES (
+--         1,
+--         'user1',
+--         'admin',
+--         'user1@example.com',
+--         'password1',
+--         'url1'
+--     ), (
+--         2,
+--         'user2',
+--         'moderator',
+--         'user2@example.com',
+--         'password2',
+--         'url2'
+--     ), (
+--         3,
+--         'user3',
+--         'user',
+--         'user3@example.com',
+--         'password3',
+--         'url3'
+--     ), (
+--         4,
+--         'user4',
+--         'user',
+--         'user4@example.com',
+--         'password4',
+--         'url4'
+--     ), (
+--         5,
+--         'user5',
+--         'user',
+--         'user5@example.com',
+--         'password5',
+--         'url5'
+--     ), (
+--         6,
+--         'user6',
+--         'moderator',
+--         'user6@example.com',
+--         'password6',
+--         'url6'
+--     ), (
+--         7,
+--         'user7',
+--         'admin',
+--         'user7@example.com',
+--         'password7',
+--         'url7'
+--     ), (
+--         8,
+--         'user8',
+--         'user',
+--         'user8@example.com',
+--         'password8',
+--         'url8'
+--     ), (
+--         9,
+--         'user9',
+--         'user',
+--         'user9@example.com',
+--         'password9',
+--         'url9'
+--     ), (
+--         10,
+--         'user10',
+--         'admin',
+--         'user10@example.com',
+--         'password10',
+--         'url10'
+--     ), (
+--         11,
+--         'user11',
+--         'user',
+--         'user11@example.com',
+--         'password11',
+--         'url11'
+--     ), (
+--         12,
+--         'user12',
+--         'moderator',
+--         'user12@example.com',
+--         'password12',
+--         'url12'
+--     ), (
+--         13,
+--         'user13',
+--         'user',
+--         'user13@example.com',
+--         'password13',
+--         'url13'
+--     ), (
+--         14,
+--         'user14',
+--         'user',
+--         'user14@example.com',
+--         'password14',
+--         'url14'
+--     ), (
+--         15,
+--         'user15',
+--         'admin',
+--         'user15@example.com',
+--         'password15',
+--         'url15'
+--     ), (
+--         16,
+--         'user16',
+--         'user',
+--         'user16@example.com',
+--         'password16',
+--         'url16'
+--     ), (
+--         17,
+--         'user17',
+--         'moderator',
+--         'user17@example.com',
+--         'password17',
+--         'url17'
+--     ), (
+--         18,
+--         'user18',
+--         'user',
+--         'user18@example.com',
+--         'password18',
+--         'url18'
+--     ), (
+--         19,
+--         'user19',
+--         'user',
+--         'user19@example.com',
+--         'password19',
+--         'url19'
+--     ), (
+--         20,
+--         'user20',
+--         'admin',
+--         'user20@example.com',
+--         'password20',
+--         'url20'
+--     );
 
 alter table `users` drop column `profile_pic`;
 
@@ -817,3 +817,7 @@ create table
 delete from `online_users` where u_id=2;
 select * from `online_users`;
 
+-- get the user_id from the session
+
+alter table `components`
+    add column `u_id` int(11) NOT NULL after `c_id`;
