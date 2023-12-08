@@ -2,6 +2,14 @@ import { getResults } from "../utility/getResults";
 
 export const getAllComponents = async (req, res) => {
     try {
+        const { u_id } = req.params.id;
+
+        if (!u_id) {
+            return res.status(400).send({
+                success: false,
+                message: "User id is required"
+            });
+        }
         const sql = /* sql */`
             select * from components
         `;
@@ -16,6 +24,7 @@ export const getAllComponents = async (req, res) => {
         }
 
         return res.status(200).send({
+            success: true,
             message: 'successfully retrieved components',
             data: results
         })
@@ -29,6 +38,8 @@ export const getAllComponents = async (req, res) => {
         });
     }
 }
+
+
 
 export const updateComponent = async (req, res) => {
     try {
@@ -61,7 +72,7 @@ export const updateComponent = async (req, res) => {
             c_type, c_created_at, c_updated_at
         ]);
 
-        
+
     } catch (error) {
         console.error(error);
 
