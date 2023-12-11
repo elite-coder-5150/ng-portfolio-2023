@@ -14,8 +14,8 @@ export interface Task {
     id: string;
     assignee: string;
     priority: Priority;
-    isCompleted: boolean;
     status: Status;
+    isCompleted: boolean;
     date_modified: Date;
     date_complete: Date;
 }
