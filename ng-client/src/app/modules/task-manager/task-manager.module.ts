@@ -5,7 +5,7 @@ import { NewTaskFormComponent } from './new-task-form/new-task-form.component';
 import { EditTaskComponent } from './edit-task/edit-task.component';
 import { TaskListComponent } from './task-list/task-list.component';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TaskManagerComponent } from './task-manager/task-manager.component';
 
 @NgModule({
@@ -19,6 +19,7 @@ import { TaskManagerComponent } from './task-manager/task-manager.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class TaskManagerModule { }
