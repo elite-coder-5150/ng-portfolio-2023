@@ -140,6 +140,7 @@ export const updateUser = async (req, res) => {
     }
 };
 
+// TODO: fix this shitty function.
 export const deleteUser = async (req, res) => {
     try {
         const { userId } = req.params;

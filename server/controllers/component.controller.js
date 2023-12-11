@@ -39,7 +39,29 @@ export const getAllComponents = async (req, res) => {
     }
 }
 
+export const createComponent = async (req, res) => {
+    try {
+        const { u_id, c_id } = req.params;
 
+        const {
+            c_name, c_author, c_version, c_description, 
+            c_type, c_created_at, c_updated_at 
+        } = req.body;
+
+        if (!u_id || !c_id) {
+            return res.status(400).send({
+                message: 'user id and component id are required'
+            })
+        }
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).send({
+            success: false,
+            message: 'internal server error',
+        })
+    }
+};
 
 export const updateComponent = async (req, res) => {
     try {
