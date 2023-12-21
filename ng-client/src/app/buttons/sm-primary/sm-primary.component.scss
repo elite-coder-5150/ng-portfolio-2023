@@ -1,9 +1,10 @@
 .btn {
     display: flex;
-    padding: 14px 8px;
+    padding: 8px 14px;
     color: #fff;
-    
+    border-radius: 8px;;
     &-primary {
         background: #7F56D9;
+        border: 1px solid #7F56D9;
     }
 }
