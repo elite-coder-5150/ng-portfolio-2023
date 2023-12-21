@@ -12,7 +12,7 @@ import { NewTaskFormComponent } from './modules/task-manager/new-task-form/new-t
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { CustomCheckboxComponent } from './custom-checkbox/custom-checkbox.component';
-import { SmPrimaryComponent } from './buttons/sm-primary/sm-primary.component';
+import { ButtonComponent } from './button/button.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,7 +21,7 @@ import { SmPrimaryComponent } from './buttons/sm-primary/sm-primary.component';
     HeaderComponent,
     FooterComponent,
     CustomCheckboxComponent,
-    SmPrimaryComponent,
+    ButtonComponent,
   ],
   imports: [
     BrowserModule,
